@@ -7,15 +7,16 @@ import fnmatch
 
 def open_pdf(file_path):
     pdfFileObj = open(file_path, 'rb')
-    pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+    pdfReader = PyPDF2.PdfFileReader(pdfFileObj,strict=False)
 
     pages = pdfReader.numPages
+    print(f"{pages=}")
     pageObj = pdfReader.getPage(0)
     text = pageObj.extractText()
     return text
 
 def get_date(text):
-    match = re.search(r'Date (\d{2})\/(\d{2})\/(\d{4})', text)
+    match = re.search(r'Date\s?(\d{2})\/(\d{2})\/(\d{4})', text)
     if match:
         day = match.group(1)
         month = match.group(2)
@@ -23,6 +24,7 @@ def get_date(text):
 
     else:
         raise ValueError("Date not found in text")
+        print(f"{text=}")
     return datetime.datetime(int(year), int(month), int(day))
 
 def is_bonus(text):
@@ -34,11 +36,11 @@ def is_bonus(text):
 
 
 def fix_file(input_filepath):
-    print(input_filepath)
+    print(f"{input_filepath=}")
 
 
     text = open_pdf(input_filepath)
-    print(text)
+    print(f"{text=}")
 
     payslip_date = get_date(text).strftime("%Y%m%d")
     bonus_text = ""
